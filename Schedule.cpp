@@ -20,8 +20,14 @@ Schedule::Schedule()
  */
 int Schedule::getCredits() const
 {
-    // Replace this stub return.
-    return -1;
+    //Use the accumulate function to go through the allCourses vector and add up all the credits from the schedule
+    int totalCredits = std::accumulate(allCourses.begin(), allCourses.end(), 0,
+                                       [](int t, const Course& cr) -> int
+                                       {
+                                           return t + cr.getCredits();
+                                       });
+    //return the total credits from the schedule
+    return totalCredits;
 }
 
 //------------------------------------------------------------------------------
@@ -30,7 +36,8 @@ int Schedule::getCredits() const
  */
 void Schedule::appendNoCheck(Course course)
 {
-
+    //Add the new course to the schedule
+    allCourses.push_back(course);
 }
 
 //------------------------------------------------------------------------------
@@ -39,8 +46,13 @@ void Schedule::appendNoCheck(Course course)
  */
 bool Schedule::wouldViolateCreditLimit(Course course) const
 {
-    // replace return true with the actual logic
-    return true;
+    //check if adding the new course with exceed the schedule credit limit
+    if (course.getCredits() + getCredits() > CREDIT_LIMIT) {
+        //return true if the course would exceed the credit limit
+        return true;
+    }
+    //return false if the course can be added
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -49,7 +61,15 @@ bool Schedule::wouldViolateCreditLimit(Course course) const
  */
 bool Schedule::alreadyInSchedule(Course course) const
 {
-    // replace return false with the actual logic
+    //check if the course being added is already in the schedule or if the course being added is the same as another then return true
+    const_iterator it = this->begin();
+    while (it != this->end()){
+        if (course.getNumber() == it->getNumber()) {
+            return true;
+        }
+        it++;
+    }
+    //if course is not already in the schedule then return false
     return false;
 }
 
@@ -59,6 +79,12 @@ bool Schedule::alreadyInSchedule(Course course) const
  */
 void Schedule::display(std::ostream& outs) const
 {
-    // Write your output loop before this line
+    //display the schedule for the student
+    const_iterator it = this->begin();
+    while (it != this->end())
+    {
+        outs << "  - " << *it << "\n";
+        it++;
+    }
     outs << "  (" << getCredits() << " Total Credits)" << "\n";
 }
